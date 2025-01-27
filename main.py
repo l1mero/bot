@@ -13,6 +13,8 @@ load_dotenv()
 
 TOKEN = getenv("BOT_TOKEN")
 
+a = 2323
+
 dp = Dispatcher()
 
 async def main() -> None:
