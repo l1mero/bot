@@ -6,3 +6,11 @@ docker run gg
 ```
 # Все да
 
+### TODO:
+
+- база данных
+- redis cache
+- хз потом придумаю
+- мб middleware
+- надо сервисы по умному интегрировать
+- docker compose
