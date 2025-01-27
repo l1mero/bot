@@ -1,0 +1,15 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    env_file: .env
+    ports:
+      - "27017:27017"
+    networks:
+      - main
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  main:
+    driver: bridge
