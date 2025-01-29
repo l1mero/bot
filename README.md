@@ -14,3 +14,6 @@ docker run gg
 - мб middleware
 - надо сервисы по умному интегрировать
 - docker compose
+- fddffdfdfdfdfddfdfdgfggfgfdffddfdfdssdds
+- fddffdfdfdfdfddfdfdgfggfgfdffdfddffdfddssddssdfdfddf
+- fddffdfdfdfdfddfdfdgfggfgfdffdfddffdfddssddssdfdfddf

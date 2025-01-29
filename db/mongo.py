@@ -1,77 +1,81 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Any, Dict
+from dotenv import load_dotenv
+from os import getenv
 
+load_dotenv()
 
-class MongoDB:
-    def __init__(self, uri: str, db_name: str):
+uri = "172.17.0.1"
+db = "bot"
+
+class Motor:
+    def __init__(self, collection: str, cache: bool = True):
         """
         Инициализация подключения к базе данных MongoDB.
 
-        :param uri: URI для подключения к MongoDB.
-        :param db_name: Имя базы данных, с которой будем работать.
+        :param collection: Название коллекции MongoDB.
         """
-        self.client = AsyncIOMotorClient(uri)
-        self.db = self.client[db_name]
+        self.client = AsyncIOMotorClient(
+            uri,
+            username=getenv("MONGO_INITDB_ROOT_USERNAME"),
+            password=getenv("MONGO_INITDB_ROOT_PASSWORD")
+        )
+        self.db = self.client[db]
+        self.col = self.db[collection]
+        self.cache = cache
 
-    async def insert_one(self, collection_name: str, document: Dict[str, Any]) -> str:
+    async def insert_one(self, document: Dict[str, Any]) -> str:
         """
         Вставка одного документа в коллекцию.
 
-        :param collection_name: Название коллекции.
         :param document: Документ для вставки.
         :return: ID вставленного документа.
         """
-        collection = self.db[collection_name]
-        result = await collection.insert_one(document)
+
+        result = await self.col.insert_one(document)
         return str(result.inserted_id)
 
-    async def find_one(self, collection_name: str, query: Dict[str, Any]) -> Dict[str, Any]:
+    async def find_one(self, query: Dict[str, Any]) -> Dict[str, Any]:
         """
         Поиск одного документа по запросу.
 
-        :param collection_name: Название коллекции.
         :param query: Запрос для поиска.
         :return: Найденный документ.
         """
-        collection = self.db[collection_name]
-        document = await collection.find_one(query)
+        document = await self.col.find_one(query)
         return document
 
-    async def update_one(self, collection_name: str, query: Dict[str, Any], update: Dict[str, Any]) -> bool:
+    async def update_one(self, query: Dict[str, Any], update: Dict[str, Any]) -> bool:
         """
         Обновление одного документа по запросу.
 
-        :param collection_name: Название коллекции.
         :param query: Запрос для поиска документа.
         :param update: Обновления для документа.
         :return: True если обновление прошло успешно, иначе False.
         """
-        collection = self.db[collection_name]
-        result = await collection.update_one(query, update)
+        result = await self.col.update_one(query, update)
         return result.modified_count > 0
 
-    async def delete_one(self, collection_name: str, query: Dict[str, Any]) -> bool:
+    async def delete_one(self, query: Dict[str, Any]) -> bool:
         """
         Удаление одного документа по запросу.
 
-        :param collection_name: Название коллекции.
         :param query: Запрос для поиска документа.
         :return: True если удаление прошло успешно, иначе False.
         """
-        collection = self.db[collection_name]
-        result = await collection.delete_one(query)
+
+        result = await self.col.delete_one(query)
         return result.deleted_count > 0
 
-    async def find_all(self, collection_name: str, query: Dict[str, Any] = {}) -> list:
+    async def find_all(self, query: Dict[str, Any] = None) -> list:
         """
         Поиск всех документов по запросу.
 
-        :param collection_name: Название коллекции.
         :param query: Запрос для поиска (по умолчанию пустой).
         :return: Список найденных документов.
         """
-        collection = self.db[collection_name]
+
         documents = []
-        async for document in collection.find(query):
+        async for document in self.col.find(query):
             documents.append(document)
         return documents

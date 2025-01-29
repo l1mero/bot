@@ -1,4 +1,5 @@
 from logic import routers
+from utils.middlewares.auth import AuthMiddleware
 
 import asyncio
 import logging
@@ -13,9 +14,8 @@ load_dotenv()
 
 TOKEN = getenv("BOT_TOKEN")
 
-a = 2323
-
 dp = Dispatcher()
+dp.message.middleware(AuthMiddleware(dp))
 
 async def main() -> None:
     # Initialize Bot instance with default bot properties which will be passed to all API calls
