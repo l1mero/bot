@@ -10,6 +10,15 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6379:6379"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file: .env
+    command: redis-server --requirepass $REDIS_PASSWORD
+
 networks:
   main:
     driver: bridge

@@ -1,3 +1,4 @@
+import redis.asyncio as redis
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Any, Dict
 from dotenv import load_dotenv
@@ -24,6 +25,9 @@ class Motor:
         self.col = self.db[collection]
         self.cache = cache
 
+        if cache:
+            self.redis = redis.Redis(host='localhost', port=6379, password=getenv("REDIS_PASSWORD"))
+
     async def insert_one(self, document: Dict[str, Any]) -> str:
         """
         Вставка одного документа в коллекцию.
@@ -33,6 +37,9 @@ class Motor:
         """
 
         result = await self.col.insert_one(document)
+
+        await self.redis.set(str(result.inserted_id), "gfgfgfgfgffgfg")
+
         return str(result.inserted_id)
 
     async def find_one(self, query: Dict[str, Any]) -> Dict[str, Any]:
